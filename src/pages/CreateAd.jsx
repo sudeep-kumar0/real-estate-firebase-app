@@ -1,584 +1,600 @@
+import { db } from "../firebase.config";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { toast } from "react-toastify";
+import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import Spinner from "../components/Spinner";
+import Navbar from "../components/Navbar"; // Import your Navbar component
+import styled from "styled-components"; // Import styled-components
 
-import { db } from '../firebase.config'
-import { getAuth, onAuthStateChanged } from "firebase/auth"
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore'
-import {
-    getStorage,
-    ref,
-    uploadBytesResumable,
-    getDownloadURL,
-} from 'firebase/storage'
-
-import { v4 as uuidv4 } from 'uuid'
-import { toast } from "react-toastify"
-import styled from 'styled-components'
-
-import Spinner from "../components/Spinner"
-
-import { useState, useEffect, useRef } from "react"
-import { useNavigate } from "react-router-dom"
+// Styled Components with improved professional styling
+const PageContainer = styled.div`
+  min-height: 100vh;
+  background-image: url("https://img.freepik.com/free-vector/stylish-glowing-digital-red-lines-banner_1017-23964.jpg?t=st=1745009972~exp=1745013572~hmac=3ae77274ce7e1dd7102b8747df4a5493ba336047ef752af73da9b36f748b5715&w=1380");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  padding: 0 0 4rem 0;
+`;
 
 const CreateContainer = styled.div`
-    width: 100%;
-    margin-top: 140px;
-`
+  padding: 2rem;
+  margin-top: 1rem;
+`;
 
 const CreateWrapper = styled.div`
-    padding: 0 25px;
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-`
+  max-width: 800px;
+  margin: 0 auto;
+  background-color: rgba(255, 255, 255, 0.95);
+  padding: 2.5rem;
+  border-radius: 15px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+`;
 
-const Createh1 = styled.h1`
-    font-size: 2.2rem;
-    margin-bottom: 30px;
-    border-bottom: solid;
-
-    @media screen and (max-width: 768px) {
-        font-size: 1.8rem;
-
-
-
-    }
-`
+const PageTitle = styled.h1`
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #2c3e50;
+  font-size: 2.5rem;
+  font-weight: 700;
+`;
 
 const CreateForm = styled.form`
-    width: 100%;
-`
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+`;
+
+const FormSection = styled.div`
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e0e0e0;
+`;
+
+const SectionTitle = styled.h3`
+  color: #34495e;
+  margin-bottom: 1rem;
+  font-weight: 600;
+`;
+
 const CreateInputGrp = styled.div`
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    margin-bottom: 50px;
+  margin-bottom: 1rem;
+`;
 
-    label{
-        font-weight: 700;
-        width: 20% !important;
-        font-size: 1.1rem;
-
-        @media screen and (max-width: 880px) {
-            width: 35% !important;
-            font-size: 1rem;
-
-
-    }
-
-    @media screen and (max-width: 880px) {
-            width: 25% !important;
-            font-size: 1rem;
-
-
-    }
-    }
-`
+const InputLabel = styled.label`
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #2c3e50;
+  font-weight: 500;
+`;
 
 const CreateInputWrapper = styled.div`
-    width: 70%;
-    margin-left: 30px;
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    gap: 20px;
-
-    p{
-        font-weight: 700;
-        font-size: 1.1rem;
-    }
-`
+  display: flex;
+  gap: 1rem;
+`;
 
 const CreateInputButton = styled.button`
-    padding: 15px 45px;
-    font-size: 1rem;
-    border-radius: 20px;
-    background-color: ${({ active }) => active ? "#ad34eb" : "#fff"};
-    border: ${({ active }) => !active && "0.5px solid #ad34eb"};
-    color: ${({ active }) => active ? "#fff" : "#000"};
-    cursor: pointer;
+  background-color: ${(props) => (props.active ? "#3498db" : "#ecf0f1")};
+  color: ${(props) => (props.active ? "#ffffff" : "#7f8c8d")};
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  flex: 1;
 
-    @media screen and (max-width: 600px) {
-        padding: 10px 25px;
-
-    }
-`
+  &:hover {
+    background-color: ${(props) => (props.active ? "#2980b9" : "#bdc3c7")};
+  }
+`;
 
 const CreateInputSelect = styled.select`
-    background-color: #ad34eb;
-    color: #fff;
-    padding: 10px 15px;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
-    font-size: 1rem;
+  padding: 0.75rem;
+  width: 100%;
+  border: 1px solid #dcdde1;
+  border-radius: 8px;
+  background-color: #f5f6fa;
+  font-size: 1rem;
 
-`
+  &:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+  }
+`;
+
 const CreateInputText = styled.input`
-    padding: 5px 10px;
-    width: 60%;
-    font-size: 1rem;
-    border-bottom: 0.5px solid #ad34eb;
+  padding: 0.75rem;
+  width: 100%;
+  border: 1px solid #dcdde1;
+  border-radius: 8px;
+  background-color: #f5f6fa;
+  font-size: 1rem;
 
-    @media screen and (max-width: 768px) {
-        width: 100%;
-    }
-`
+  &:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+  }
+`;
 
-const CreateInputNumber = styled.input`
-    padding: 10px 20px;
-    font-size: 1rem;
-    border: 0.5px solid #ad34eb;
-    border-radius: 20px;
-`
+const CreateInputNumber = styled(CreateInputText).attrs({ type: "number" })``;
+
+const InputFileWrapper = styled.div`
+  position: relative;
+  margin-top: 0.5rem;
+`;
 
 const CreateInputFile = styled.input`
-    width: 175px;
- 
-    &::-webkit-file-upload-button{
-        background-color: #ad34eb;
-        border: none;
-        outline: none;
-        color: #ffffff;
-        font-weight: 600;
-        text-align: center;
-        padding: 15px 35px;
-        font-size: 1rem;
-        border-radius: 20px;
- }
-`
+  padding: 0.75rem;
+  width: 100%;
+  background-color: #f5f6fa;
+  border: 2px dashed #dcdde1;
+  border-radius: 8px;
+  cursor: pointer;
+
+  &:focus {
+    outline: none;
+    border-color: #3498db;
+  }
+`;
 
 const CreateInputSelectedFiles = styled.div`
-    width: 60%;
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    margin: 0 auto;
-    gap: 30px;
-`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1rem;
+`;
 
 const CreateInputSelectedImageWrapper = styled.div`
-    width: 30%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+`;
 
-    h3{
-        margin-bottom: 10px;
-        font-weight: 500;
-    }
-`
 const CreateInputSelectedImage = styled.img`
-    width: 100%;
-    border-radius: 10px;
+  width: 150px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+`;
 
-`
+const TwoColumnLayout = styled.div`
+  display: flex;
+  gap: 1.5rem;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+`;
+
+const ColumnHalf = styled.div`
+  flex: 1;
+`;
 
 const CreateButton = styled.button`
-    font-weight: 600;
-    font-size:  1.1rem;
-    width: 100%;
-    margin: 60px auto 120px;
-    padding: 15px 45px;
-    font-size: 1rem;
-    border-radius: 20px;
-    background-color: #ad34eb;
-    color: #fff;
-    cursor: pointer;
-`
+  background-color: #27ae60;
+  color: white;
+  padding: 1rem;
+  font-size: 1.1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+
+  &:hover {
+    background-color: #2ecc71;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(46, 204, 113, 0.2);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+`;
 
 const CreateAd = () => {
+  const navigate = useNavigate();
+  const auth = getAuth();
+  const isMounted = useRef(true);
 
-    const navigate = useNavigate()
-    const auth = getAuth()
-    const isMounted = useRef(true)
+  const [loading, setLoading] = useState(false);
+  const [cloudinaryPreviewUrls, setCloudinaryPreviewUrls] = useState([]);
+  const [formData, setFormData] = useState({
+    forType: "sale",
+    type: "",
+    name: "",
+    address: "",
+    bedrooms: 1,
+    bathrooms: 1,
+    furnished: false,
+    offer: false,
+    regularPrice: 0,
+    discountedPrice: 0,
+    images: {},
+    latitude: 0,
+    longitude: 0,
+  });
 
-    const [loading, setLoading] = useState(false)
-    const [formData, setFormData] = useState({
-        forType: "sale",
-        type: "",
-        name: "",
-        address: "",
-        bedrooms: 1,
-        bathrooms: 1,
-        furnished: false,
-        offer: false,
-        regularPrice: 0,
-        discountedPrice: 0,
-        images: {},
-        latitude: 0,
-        longitude: 0
-    })
+  const {
+    forType,
+    type,
+    name,
+    address,
+    bedrooms,
+    bathrooms,
+    furnished,
+    offer,
+    regularPrice,
+    discountedPrice,
+    images,
+    latitude,
+    longitude,
+  } = formData;
 
-    const {
-        forType,
-        type,
-        name,
-        address,
-        bedrooms,
-        bathrooms,
-        furnished,
-        offer,
-        regularPrice,
-        discountedPrice,
-        images,
-        latitude,
-        longitude,
-    } = formData
-
-    useEffect(() => {
-        if (isMounted) {
-            onAuthStateChanged(auth, (user) => {
-                if (user) {
-                    setFormData({ ...formData, userRef: user.uid })
-                }
-                else {
-                    navigate("/sign-in")
-                }
-            })
+  useEffect(() => {
+    if (isMounted.current) {
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          setFormData((prev) => ({ ...prev, userRef: user.uid }));
+        } else {
+          navigate("/sign-in");
         }
+      });
+    }
+    return () => {
+      isMounted.current = false;
+    };
+  }, [auth, navigate]);
 
-        return () => {
-            isMounted.current = false
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isMounted])
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
 
+    if (discountedPrice >= regularPrice) {
+      toast.error("Discounted price must be less than regular price");
+      setLoading(false);
+      return;
+    }
 
-    const onSubmit = async (e) => {
-        e.preventDefault()
+    if (images.length > 6) {
+      toast.error("Maximum 6 images allowed");
+      setLoading(false);
+      return;
+    }
 
-        setLoading(true)
-        if (discountedPrice >= regularPrice) {
-            setLoading(false)
-            toast.error("Discounted price needs to be less than regular price")
-            return
-        }
+    try {
+      const uploadedImageUrls = await Promise.all(
+        [...images].map(async (image) => {
+          const data = new FormData();
+          data.append("file", image);
+          data.append("upload_preset", "ml_default"); // your Cloudinary unsigned preset
 
-        if (images.length > 6) {
-            setLoading(false)
-            toast.error("Max 6 images")
-            return
-        }
+          const res = await fetch(
+            "https://api.cloudinary.com/v1_1/dmu7j8wov/image/upload",
+            {
+              method: "POST",
+              body: data,
+            }
+          );
 
-        // Store image in firebase
-        const storeImage = async (image) => {
-            return new Promise((resolve, reject) => {
+          const file = await res.json();
 
-                const storage = getStorage()
-                const fileName = `${auth.currentUser.uid}-${image.name}-${uuidv4()}`
+          if (!res.ok) {
+            throw new Error(file?.error?.message || "Image upload failed");
+          }
 
-                const storageRef = ref(storage, 'images/' + fileName)
-                const uploadTask = uploadBytesResumable(storageRef, image)
-
-                uploadTask.on(
-                    'state_changed',
-                    (snapshot) => {
-                        const progress =
-                            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-                        console.log('Upload is ' + progress + '% done')
-                        switch (snapshot.state) {
-                            case 'paused':
-                                console.log('Upload is paused')
-                                break
-                            case 'running':
-                                console.log('Upload is running')
-                                break
-                            default:
-                                break
-                        }
-                    },
-                    (error) => {
-                        reject(error)
-                    },
-                    () => {
-                        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                            resolve(downloadURL)
-                        })
-                    }
-                )
-            })
-        }
-
-        const imgUrls = await Promise.all(
-            [...images].map((image) => storeImage(image))
-        ).catch(() => {
-            setLoading(false)
-            toast.error('Images not uploaded')
-            return
+          return file.secure_url;
         })
+      );
 
-        const formDataCopy = {
-            ...formData,
-            imgUrls,
-            latitude,
-            longitude,
-            timestamp: serverTimestamp()
-        }
+      // Set Cloudinary preview URLs in state
+      setCloudinaryPreviewUrls(uploadedImageUrls);
 
-        formDataCopy.location = address
-        delete formDataCopy.images
-        delete formDataCopy.address
-        !formDataCopy.offer && delete formDataCopy.discountedPrice
+      const formDataCopy = {
+        ...formData,
+        imageUrls: uploadedImageUrls,
+        location: address,
+        timestamp: serverTimestamp(),
+      };
 
-        const docRef = await addDoc(collection(db, "houses"), formDataCopy)
-        setLoading(false)
-        toast.success("House saved")
-        navigate(`/house/${docRef.id}`)
+      delete formDataCopy.images;
+      delete formDataCopy.address;
+      !formDataCopy.offer && delete formDataCopy.discountedPrice;
+
+      const docRef = await addDoc(collection(db, "houses"), formDataCopy);
+
+      toast.success("Property listing created successfully!");
+      navigate(`/house/${docRef.id}`);
+    } catch (error) {
+      toast.error("Image upload or data saving failed");
+      console.error(error);
     }
 
-    const onMutate = (e) => {
-        let boolean = null
+    setLoading(false);
+  };
 
-        if (e.target.value === "true") {
-            boolean = true
-        }
+  const onMutate = (e) => {
+    let boolean = null;
 
-        if (e.target.value === "false") {
-            boolean = false
-        }
+    if (e.target.value === "true") boolean = true;
+    if (e.target.value === "false") boolean = false;
 
-        // Files
-        if (e.target.files) {
-            setFormData((prevState) => ({
-                ...prevState,
-                images: e.target.files
-            }))
-        }
-
-        // Text/Booleans/Numbers
-        if (!e.target.files) {
-            setFormData((prevState) => ({
-                ...prevState,
-                [e.target.id]: boolean ?? e.target.value
-            }))
-        }
+    if (e.target.files) {
+      setFormData((prev) => ({
+        ...prev,
+        images: e.target.files,
+      }));
     }
 
-    if (loading) {
-        return <Spinner />
+    if (!e.target.files) {
+      setFormData((prev) => ({
+        ...prev,
+        [e.target.id]: boolean ?? e.target.value,
+      }));
     }
+  };
 
-    return (
-        <CreateContainer>
-            <CreateWrapper>
-                <Createh1>
-                    Sell or Rent Your Home
-                </Createh1>
-                <CreateForm onSubmit={onSubmit}>
-                    <CreateInputGrp>
-                        <label htmlFor="">Sell / Rent</label>
-                        <CreateInputWrapper>
-                            <CreateInputButton
-                                active={forType === "sale"}
-                                type='button'
-                                id='forType'
-                                value='sale'
-                                onClick={onMutate}
-                            >
-                                Sell
-                            </CreateInputButton>
-                            <CreateInputButton
-                                active={forType === "rent"}
-                                type='button'
-                                id='forType'
-                                value='rent'
-                                onClick={onMutate}
-                            >
-                                Rent
-                            </CreateInputButton>
-                        </CreateInputWrapper>
-                    </CreateInputGrp>
-                    <CreateInputGrp>
-                        <label htmlFor="">Type</label>
-                        <CreateInputWrapper>
-                            <CreateInputSelect id="type" className="postForm-select" required value={type} onChange={onMutate}>
-                                <option value="mansion">Mansion</option>
-                                <option value="family">Family</option>
-                                <option value="condo">Condo</option>
-                                <option value="island">Island</option>
-                                <option value="tiny-house">Tiny Houses</option>
-                                <option value="tree-house">Tree Houses</option>
-                            </CreateInputSelect>
-                        </CreateInputWrapper>
-                    </CreateInputGrp>
-                    <CreateInputGrp>
-                        <label htmlFor="">Name</label>
-                        <CreateInputWrapper>
-                            <CreateInputText
-                                type='text'
-                                id='name'
-                                value={name}
-                                onChange={onMutate}
-                                maxLength='52'
-                                minLength='10'
-                                required
-                            />
-                        </CreateInputWrapper>
-                    </CreateInputGrp>
-                    <CreateInputGrp>
-                        <label htmlFor="">Bedrooms</label>
-                        <CreateInputWrapper>
-                            <CreateInputNumber
-                                type='number'
-                                id='bedrooms'
-                                value={bedrooms}
-                                onChange={onMutate}
-                                min='1'
-                                max='50'
-                                required
-                            />
-                        </CreateInputWrapper>
-                    </CreateInputGrp>
-                    <CreateInputGrp>
-                        <label htmlFor="">Bathrooms</label>
-                        <CreateInputWrapper>
-                            <CreateInputNumber
-                                type='number'
-                                id='bathrooms'
-                                value={bathrooms}
-                                onChange={onMutate}
-                                min='1'
-                                max='50'
-                                required
-                            />
-                        </CreateInputWrapper>
-                    </CreateInputGrp>
-                    <CreateInputGrp>
-                        <label htmlFor="">Furnished</label>
-                        <CreateInputWrapper>
-                            <CreateInputButton
-                                active={furnished}
-                                type='button'
-                                id='furnished'
-                                value={true}
-                                onClick={onMutate}
-                            >
-                                Yes
-                            </CreateInputButton>
-                            <CreateInputButton
-                                active={!furnished && furnished !== null}
-                                type='button'
-                                id='furnished'
-                                value={false}
-                                onClick={onMutate}
-                            >
-                                No
-                            </CreateInputButton>
-                        </CreateInputWrapper>
-                    </CreateInputGrp>
-                    <CreateInputGrp>
-                        <label htmlFor="">Address</label>
-                        <CreateInputWrapper>
-                            <CreateInputText
-                                type='text'
-                                id='address'
-                                value={address}
-                                onChange={onMutate}
-                                required
-                            />
-                        </CreateInputWrapper>
-                    </CreateInputGrp>
-                    <CreateInputGrp>
-                        <label htmlFor="">Latitude</label>
-                        <CreateInputWrapper>
-                            <CreateInputNumber
-                                type='number'
-                                id='latitude'
-                                value={latitude}
-                                onChange={onMutate}
-                                required
-                            />
-                        </CreateInputWrapper>
-                    </CreateInputGrp>
-                    <CreateInputGrp>
-                        <label htmlFor="">Longitude</label>
-                        <CreateInputWrapper>
-                            <CreateInputNumber
-                                type='number'
-                                id='longitude'
-                                value={longitude}
-                                onChange={onMutate}
-                                required
-                            />
-                        </CreateInputWrapper>
-                    </CreateInputGrp>
-                    <CreateInputGrp>
-                        <label htmlFor="">Offer</label>
-                        <CreateInputWrapper>
-                            <CreateInputButton
-                                active={offer}
-                                type='button'
-                                id='offer'
-                                value={true}
-                                onClick={onMutate}
-                            >
-                                Yes
-                            </CreateInputButton>
-                            <CreateInputButton
-                                active={!offer && offer !== null}
-                                type='button'
-                                id='offer'
-                                value={false}
-                                onClick={onMutate}
-                            >
-                                No
-                            </CreateInputButton>
-                        </CreateInputWrapper>
-                    </CreateInputGrp>
-                    <CreateInputGrp>
-                        <label htmlFor="">Regular Price</label>
-                        <CreateInputWrapper>
-                            <CreateInputNumber
-                                type='number'
-                                id='regularPrice'
-                                value={regularPrice}
-                                onChange={onMutate}
-                                min='50'
-                                max='750000000'
-                                required
-                            />
-                            {forType === 'rent' && <p>$ / Month</p>}
-                        </CreateInputWrapper>
-                    </CreateInputGrp>
-                    {offer && (
-                        <CreateInputGrp>
-                            <label>Discounted Price</label>
-                            <CreateInputNumber
-                                type='number'
-                                id='discountedPrice'
-                                value={discountedPrice}
-                                onChange={onMutate}
-                                min='50'
-                                max='750000000'
-                                required={offer}
-                            />
-                        </CreateInputGrp>
-                    )}
-                    <CreateInputGrp>
-                        <label>Images</label>
-                        <CreateInputFile
-                            type='file'
-                            id='images'
-                            onChange={onMutate}
-                            max={6}
-                            accept='.jpg,.png,.jpeg'
-                            multiple
-                            required
-                        />
-                        <CreateInputSelectedFiles>
-                            {images.length > 6 ? <p>Max 6 images</p> : <>{Array.from(images)
-                                .map(file => (
-                                    <CreateInputSelectedImageWrapper key={file.name + uuidv4()}>
-                                        <h3>{file.name}</h3>
-                                        <CreateInputSelectedImage src={file && URL.createObjectURL(file)} />
-                                    </CreateInputSelectedImageWrapper>
-                                ))}</>}
-                        </CreateInputSelectedFiles>
-                    </CreateInputGrp>
-                    <CreateButton type="submit">Create Ad</CreateButton>
-                </CreateForm>
-            </CreateWrapper>
-        </CreateContainer>
-    )
-}
+  if (loading) return <Spinner />;
 
-export default CreateAd
+  return (
+    <PageContainer>
+      <Navbar /> {/* Your navigation bar component */}
+      <CreateContainer>
+        <CreateWrapper>
+          <PageTitle>List Your Property</PageTitle>
+          <CreateForm onSubmit={onSubmit}>
+            {/* Property Intent Section */}
+            <FormSection>
+              <SectionTitle>Property Intent</SectionTitle>
+              <CreateInputGrp>
+                <InputLabel>Do you want to sell or rent?</InputLabel>
+                <CreateInputWrapper>
+                  <CreateInputButton
+                    active={forType === "sale"}
+                    type="button"
+                    id="forType"
+                    value="sale"
+                    onClick={onMutate}
+                  >
+                    Sell
+                  </CreateInputButton>
+                  <CreateInputButton
+                    active={forType === "rent"}
+                    type="button"
+                    id="forType"
+                    value="rent"
+                    onClick={onMutate}
+                  >
+                    Rent
+                  </CreateInputButton>
+                </CreateInputWrapper>
+              </CreateInputGrp>
+            </FormSection>
+
+            {/* Property Details Section */}
+            <FormSection>
+              <SectionTitle>Property Details</SectionTitle>
+              <CreateInputGrp>
+                <InputLabel>Property Type</InputLabel>
+                <CreateInputSelect
+                  id="type"
+                  value={type}
+                  onChange={onMutate}
+                  required
+                >
+                  <option value="">--Select Property Type--</option>
+                  <option value="mansion">Mansion</option>
+                  <option value="family">Family Home</option>
+                  <option value="condo">Condominium</option>
+                  <option value="island">Private Island</option>
+                  <option value="tiny-house">Tiny House</option>
+                  <option value="tree-house">Tree House</option>
+                </CreateInputSelect>
+              </CreateInputGrp>
+
+              <CreateInputGrp>
+                <InputLabel>Property Name</InputLabel>
+                <CreateInputText
+                  type="text"
+                  id="name"
+                  value={name}
+                  onChange={onMutate}
+                  placeholder="Enter a descriptive title for your property"
+                  required
+                />
+              </CreateInputGrp>
+
+              <TwoColumnLayout>
+                <ColumnHalf>
+                  <CreateInputGrp>
+                    <InputLabel>Bedrooms</InputLabel>
+                    <CreateInputNumber
+                      id="bedrooms"
+                      value={bedrooms}
+                      onChange={onMutate}
+                      min="1"
+                      required
+                    />
+                  </CreateInputGrp>
+                </ColumnHalf>
+                <ColumnHalf>
+                  <CreateInputGrp>
+                    <InputLabel>Bathrooms</InputLabel>
+                    <CreateInputNumber
+                      id="bathrooms"
+                      value={bathrooms}
+                      onChange={onMutate}
+                      min="1"
+                      required
+                    />
+                  </CreateInputGrp>
+                </ColumnHalf>
+              </TwoColumnLayout>
+
+              <CreateInputGrp>
+                <InputLabel>Furnished</InputLabel>
+                <CreateInputWrapper>
+                  <CreateInputButton
+                    active={furnished}
+                    type="button"
+                    id="furnished"
+                    value={true}
+                    onClick={onMutate}
+                  >
+                    Yes
+                  </CreateInputButton>
+                  <CreateInputButton
+                    active={!furnished}
+                    type="button"
+                    id="furnished"
+                    value={false}
+                    onClick={onMutate}
+                  >
+                    No
+                  </CreateInputButton>
+                </CreateInputWrapper>
+              </CreateInputGrp>
+            </FormSection>
+
+            {/* Location Section */}
+            <FormSection>
+              <SectionTitle>Location</SectionTitle>
+              <CreateInputGrp>
+                <InputLabel>Address</InputLabel>
+                <CreateInputText
+                  type="text"
+                  id="address"
+                  value={address}
+                  onChange={onMutate}
+                  placeholder="Enter the full property address"
+                  required
+                />
+              </CreateInputGrp>
+
+              <TwoColumnLayout>
+                <ColumnHalf>
+                  <CreateInputGrp>
+                    <InputLabel>Latitude</InputLabel>
+                    <CreateInputNumber
+                      id="latitude"
+                      value={latitude}
+                      onChange={onMutate}
+                      step="0.000001"
+                      required
+                    />
+                  </CreateInputGrp>
+                </ColumnHalf>
+                <ColumnHalf>
+                  <CreateInputGrp>
+                    <InputLabel>Longitude</InputLabel>
+                    <CreateInputNumber
+                      id="longitude"
+                      value={longitude}
+                      onChange={onMutate}
+                      step="0.000001"
+                      required
+                    />
+                  </CreateInputGrp>
+                </ColumnHalf>
+              </TwoColumnLayout>
+            </FormSection>
+
+            {/* Pricing Section */}
+            <FormSection>
+              <SectionTitle>Pricing</SectionTitle>
+              <CreateInputGrp>
+                <InputLabel>
+                  Regular Price {forType === "rent" ? "($ / month)" : "($)"}
+                </InputLabel>
+                <CreateInputNumber
+                  id="regularPrice"
+                  value={regularPrice}
+                  onChange={onMutate}
+                  min="1"
+                  required
+                />
+              </CreateInputGrp>
+
+              <CreateInputGrp>
+                <InputLabel>Offer Special Discount?</InputLabel>
+                <CreateInputWrapper>
+                  <CreateInputButton
+                    active={offer}
+                    type="button"
+                    id="offer"
+                    value={true}
+                    onClick={onMutate}
+                  >
+                    Yes
+                  </CreateInputButton>
+                  <CreateInputButton
+                    active={!offer}
+                    type="button"
+                    id="offer"
+                    value={false}
+                    onClick={onMutate}
+                  >
+                    No
+                  </CreateInputButton>
+                </CreateInputWrapper>
+              </CreateInputGrp>
+
+              {offer && (
+                <CreateInputGrp>
+                  <InputLabel>
+                    Discounted Price{" "}
+                    {forType === "rent" ? "($ / month)" : "($)"}
+                  </InputLabel>
+                  <CreateInputNumber
+                    id="discountedPrice"
+                    value={discountedPrice}
+                    onChange={onMutate}
+                    min="1"
+                    required
+                  />
+                </CreateInputGrp>
+              )}
+            </FormSection>
+
+            {/* Images Section */}
+            <FormSection>
+              <SectionTitle>Images</SectionTitle>
+              <CreateInputGrp>
+                <InputLabel>Upload Property Images (Max 6)</InputLabel>
+                <InputFileWrapper>
+                  <CreateInputFile
+                    type="file"
+                    id="images"
+                    onChange={onMutate}
+                    accept="image/*"
+                    multiple
+                    required
+                  />
+                </InputFileWrapper>
+                <CreateInputSelectedFiles>
+                  {cloudinaryPreviewUrls.map((url, index) => (
+                    <CreateInputSelectedImageWrapper key={index}>
+                      <CreateInputSelectedImage
+                        src={url}
+                        alt={`uploaded-${index}`}
+                      />
+                    </CreateInputSelectedImageWrapper>
+                  ))}
+                </CreateInputSelectedFiles>
+              </CreateInputGrp>
+            </FormSection>
+
+            <CreateButton type="submit">Create Property Listing</CreateButton>
+          </CreateForm>
+        </CreateWrapper>
+      </CreateContainer>
+    </PageContainer>
+  );
+};
+
+export default CreateAd;

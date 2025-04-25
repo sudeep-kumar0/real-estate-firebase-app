@@ -6,62 +6,72 @@ const PageContainer = styled.div`
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
-  background-color: #f9fbfd;
+  background-color: #f5f7fa;
 `;
 
 const Header = styled.header`
   text-align: center;
-  margin-bottom: 3rem;
+  margin-bottom: 3.5rem;
   position: relative;
-  padding-bottom: 2rem;
+  padding-bottom: 2.5rem;
 
-  &:after {
+  &:before {
     content: "";
     position: absolute;
     bottom: 0;
     left: 50%;
     transform: translateX(-50%);
+    width: 150px;
+    height: 3px;
+    background: linear-gradient(135deg, #43a047, #66bb6a);
+  }
+
+  &:after {
+    content: "";
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
     width: 80px;
-    height: 4px;
-    background: linear-gradient(135deg, #0a6cad, #08a3df);
-    border-radius: 2px;
+    height: 3px;
+    background: linear-gradient(135deg, #66bb6a, #81c784);
   }
 `;
 
 const Title = styled.h1`
-  font-size: 2.8rem;
-  color: #0a6cad;
-  margin-bottom: 1rem;
+  font-size: 3.2rem;
+  color: #2e7d32;
+  margin-bottom: 1.2rem;
   font-weight: 700;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 `;
 
 const Description = styled.p`
   font-size: 1.3rem;
-  color: #555;
+  color: #455a64;
   max-width: 800px;
   margin: 0 auto;
-  line-height: 1.6;
+  line-height: 1.7;
 `;
 
 const PropertyGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 30px;
+  gap: 25px;
   margin-top: 2rem;
 `;
 
 const PropertyCard = styled.div`
-  border-radius: 12px;
+  border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-  transition: all 0.3s ease;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.06);
+  transition: all 0.4s ease;
   background-color: white;
   position: relative;
 
   &:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
+    transform: translateY(-12px) scale(1.01);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
   }
 `;
 
@@ -78,17 +88,18 @@ const PropertyImage = styled.div`
     left: 0;
     right: 0;
     height: 80px;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent);
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.65), transparent);
   }
 `;
 
 const PropertyInfo = styled.div`
-  padding: 1.8rem;
+  padding: 2rem;
+  position: relative;
 `;
 
 const PropertyTitle = styled.h3`
   margin-top: 0;
-  color: #222;
+  color: #1b5e20;
   font-size: 1.4rem;
   font-weight: 600;
   white-space: nowrap;
@@ -98,15 +109,15 @@ const PropertyTitle = styled.h3`
 
 const PropertyPrice = styled.div`
   font-weight: 700;
-  color: #0a6cad;
-  font-size: 1.4rem;
-  margin: 0.5rem 0;
+  color: #2e7d32;
+  font-size: 1.5rem;
+  margin: 0.6rem 0;
   display: flex;
   align-items: center;
 
   &:before {
     content: "₹";
-    margin-right: 2px;
+    margin-right: 4px;
     font-size: 0.9em;
   }
 `;
@@ -114,39 +125,39 @@ const PropertyPrice = styled.div`
 const PropertyDetails = styled.div`
   display: flex;
   justify-content: space-between;
-  margin-top: 1.2rem;
-  color: #666;
+  margin-top: 1.4rem;
+  color: #546e7a;
   font-size: 0.95rem;
-  border-top: 1px solid #eee;
-  padding-top: 1.2rem;
+  border-top: 1px solid #e0f2f1;
+  padding-top: 1.4rem;
 `;
 
 const PropertyDetail = styled.span`
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
 
   svg {
-    color: #0a6cad;
+    color: #43a047;
   }
 `;
 
 const BackButton = styled.button`
-  background: #f0f0f0;
+  background: #e8f5e9;
   border: none;
   padding: 12px 24px;
   border-radius: 8px;
   cursor: pointer;
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
   display: flex;
   align-items: center;
   gap: 8px;
   font-weight: 600;
+  color: #2e7d32;
   transition: all 0.2s ease;
-  color: #333;
 
   &:hover {
-    background: #e0e0e0;
+    background: #c8e6c9;
     transform: translateX(-5px);
   }
 
@@ -159,123 +170,125 @@ const Badge = styled.span`
   position: absolute;
   top: 15px;
   right: 15px;
-  background: ${(props) => props.color || "rgba(10, 108, 173, 0.85)"};
+  background: ${(props) => props.color || "rgba(46, 125, 50, 0.85)"};
   color: white;
-  padding: 5px 10px;
-  border-radius: 4px;
+  padding: 6px 14px;
+  border-radius: 8px;
   font-size: 0.8rem;
   font-weight: 600;
   z-index: 2;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 `;
 
-const Mangalore = () => {
+const Kundapura = () => {
   const navigate = useNavigate();
 
-  // Enhanced property data with more houses and additional details
   const properties = [
     {
       id: 1,
-      title: "Modern Villa in Kadri Hills",
-      price: "1.2 Cr",
+      title: "Lush Green Estate in Kodi",
+      price: "1.7 Cr",
       image:
-        "https://images.unsplash.com/photo-1613977257363-707ba9348227?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-      beds: 4,
-      baths: 3,
-      area: "3200 sq ft",
+        "https://images.unsplash.com/photo-1598228723793-52759bba239c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+      beds: 5,
+      baths: 4,
+      area: "4200 sq ft",
       badge: "Premium",
-      badgeColor: "rgba(10, 108, 173, 0.85)",
+      badgeColor: "rgba(46, 125, 50, 0.85)",
     },
     {
       id: 2,
-      title: "Seaview Apartment in Surathkal",
-      price: "85 Lakhs",
+      title: "Beachfront Villa near Kodi Beach",
+      price: "2.1 Cr",
       image:
-        "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-      beds: 3,
-      baths: 2,
-      area: "1800 sq ft",
-      badge: "Sea View",
-      badgeColor: "rgba(25, 135, 84, 0.85)",
+        "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+      beds: 4,
+      baths: 4,
+      area: "3800 sq ft",
+      badge: "Beachfront",
+      badgeColor: "rgba(3, 155, 229, 0.85)",
     },
     {
       id: 3,
-      title: "Luxury Flat in City Centre",
-      price: "95 Lakhs",
+      title: "Traditional Home with Spice Garden",
+      price: "1.2 Cr",
       image:
-        "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-      beds: 3,
-      baths: 2,
-      area: "2000 sq ft",
+        "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+      beds: 4,
+      baths: 3,
+      area: "3200 sq ft",
+      badge: "Garden",
+      badgeColor: "rgba(76, 175, 80, 0.85)",
     },
     {
       id: 4,
-      title: "Family Home in Bejai",
-      price: "1.5 Cr",
+      title: "Modern Family Home in Town",
+      price: "95 Lakhs",
       image:
         "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-      beds: 5,
-      baths: 4,
-      area: "4000 sq ft",
-      badge: "Spacious",
-      badgeColor: "rgba(13, 110, 253, 0.85)",
+      beds: 3,
+      baths: 3,
+      area: "2400 sq ft",
     },
     {
       id: 5,
-      title: "Riverside Villa in Kuloor",
-      price: "1.8 Cr",
+      title: "Riverside Property with Boat Dock",
+      price: "1.6 Cr",
       image:
-        "https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+        "https://images.unsplash.com/photo-1583608205776-bfd35f0d9f83?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
       beds: 4,
-      baths: 4,
-      area: "3600 sq ft",
-      badge: "Waterfront",
-      badgeColor: "rgba(25, 135, 84, 0.85)",
+      baths: 3,
+      area: "3500 sq ft",
+      badge: "Riverside",
+      badgeColor: "rgba(3, 155, 229, 0.85)",
     },
     {
       id: 6,
-      title: "Modern Apartment near Falnir",
-      price: "78 Lakhs",
+      title: "Coconut Plantation Home",
+      price: "1.4 Cr",
       image:
-        "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-      beds: 2,
-      baths: 2,
-      area: "1650 sq ft",
+        "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+      beds: 4,
+      baths: 3,
+      area: "3300 sq ft",
+      badge: "Plantation",
+      badgeColor: "rgba(175, 180, 43, 0.85)",
     },
     {
       id: 7,
-      title: "Penthouse in Mangalore CBD",
-      price: "2.1 Cr",
+      title: "Modern Apartment near Market",
+      price: "75 Lakhs",
       image:
-        "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-      beds: 4,
-      baths: 3,
-      area: "3100 sq ft",
-      badge: "Luxury",
-      badgeColor: "rgba(102, 16, 242, 0.85)",
+        "https://images.unsplash.com/photo-1574362848149-11496d93a7c7?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+      beds: 3,
+      baths: 2,
+      area: "1500 sq ft",
+      badge: "Central",
+      badgeColor: "rgba(121, 85, 72, 0.85)",
     },
     {
       id: 8,
-      title: "Garden House in Bajpe",
+      title: "Hill View Estate in Halady",
       price: "1.3 Cr",
       image:
-        "https://images.unsplash.com/photo-1628744448840-55bdb2497bd4?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-      beds: 3,
+        "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+      beds: 4,
       baths: 3,
-      area: "2800 sq ft",
-      badge: "Garden",
-      badgeColor: "rgba(25, 135, 84, 0.85)",
+      area: "3100 sq ft",
+      badge: "Hill View",
+      badgeColor: "rgba(46, 125, 50, 0.85)",
     },
     {
       id: 9,
-      title: "Compact Apartment in Moodbidri",
-      price: "55 Lakhs",
+      title: "Eco-friendly Home with Solar Power",
+      price: "1.1 Cr",
       image:
-        "https://images.unsplash.com/photo-1574362848149-11496d93a7c7?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-      beds: 2,
-      baths: 1,
-      area: "1100 sq ft",
-      badge: "Best Deal",
-      badgeColor: "rgba(220, 53, 69, 0.85)",
+        "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+      beds: 3,
+      baths: 2,
+      area: "2600 sq ft",
+      badge: "Eco-friendly",
+      badgeColor: "rgba(46, 125, 50, 0.85)",
     },
   ];
 
@@ -298,11 +311,12 @@ const Mangalore = () => {
       </BackButton>
 
       <Header>
-        <Title>Properties in Mangalore</Title>
+        <Title>Properties in Kundapura</Title>
         <Description>
-          Discover your dream home in Mangalore, a coastal gem known for its
-          beautiful beaches, rich culture, and growing real estate market.
-          Browse through our exclusive selection of premium properties.
+          Discover nature-enriched living spaces in Kundapura, a lush green
+          paradise with scenic beaches, serene backwaters, and ancient temples.
+          Enjoy traditional coastal living with modern amenities in this
+          picturesque town.
         </Description>
       </Header>
 
@@ -368,4 +382,4 @@ const Mangalore = () => {
   );
 };
 
-export default Mangalore;
+export default Kundapura;

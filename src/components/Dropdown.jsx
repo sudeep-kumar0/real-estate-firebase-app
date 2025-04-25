@@ -52,13 +52,12 @@ const Dropdown = ({ isOpen, toggle }) => {
     return (
         <DropdownContainer isOpen={isOpen} onClick={toggle}>
             <DropdownWrapper>
-                <MenuItem to={"/"}>About</MenuItem>
-                <MenuItem to={auth ? "/profile" : "/sign-up"}>{auth ? "Profile" : "Explore"}</MenuItem>
-                <MenuItem to={"/sign-in"} onClick={logOut}>{auth ? "LogOut" : "Sign In"}</MenuItem>
+            <MenuItem as="button" onClick={() => window.location.href = "/about"}>About</MenuItem>
+            <MenuItem to={auth ? "/profile" : "/sign-up"}>{auth ? "Profile" : "Explore"}</MenuItem>
+            <MenuItem to={"/sign-in"} onClick={logOut}>{auth ? "LogOut" : "Sign In"}</MenuItem>
             </DropdownWrapper>
-
         </DropdownContainer>
-    )
+        )
 }
 
 export default Dropdown

@@ -93,7 +93,7 @@ const Contact = () => {
 const styles = {
   container: {
     background:
-      "url('https://saihqarc1.salvationarmy.org/assets/img/green-and-blue-background.jpeg') no-repeat center center/cover",
+      "url('https://www.pixground.com/wp-content/uploads/2024/06/Dark-Golden-Swirl-Abstract-4K-Wallpaper-1081x608.jpg') no-repeat center center/cover",
     minHeight: "100vh",
     display: "flex",
     alignItems: "center",

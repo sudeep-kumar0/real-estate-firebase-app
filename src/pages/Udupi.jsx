@@ -6,14 +6,14 @@ const PageContainer = styled.div`
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
-  background-color: #f9fbfd;
+  background-color: #f5f9fc;
 `;
 
 const Header = styled.header`
   text-align: center;
-  margin-bottom: 3rem;
+  margin-bottom: 3.5rem;
   position: relative;
-  padding-bottom: 2rem;
+  padding-bottom: 2.5rem;
 
   &:after {
     content: "";
@@ -21,17 +21,17 @@ const Header = styled.header`
     bottom: 0;
     left: 50%;
     transform: translateX(-50%);
-    width: 80px;
-    height: 4px;
-    background: linear-gradient(135deg, #0a6cad, #08a3df);
+    width: 100px;
+    height: 3px;
+    background: linear-gradient(135deg, #0b548e, #107ab3);
     border-radius: 2px;
   }
 `;
 
 const Title = styled.h1`
-  font-size: 2.8rem;
-  color: #0a6cad;
-  margin-bottom: 1rem;
+  font-size: 3rem;
+  color: #0b548e;
+  margin-bottom: 1.2rem;
   font-weight: 700;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 `;
@@ -41,7 +41,7 @@ const Description = styled.p`
   color: #555;
   max-width: 800px;
   margin: 0 auto;
-  line-height: 1.6;
+  line-height: 1.7;
 `;
 
 const PropertyGrid = styled.div`
@@ -52,16 +52,17 @@ const PropertyGrid = styled.div`
 `;
 
 const PropertyCard = styled.div`
-  border-radius: 12px;
+  border-radius: 15px;
   overflow: hidden;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.07);
   transition: all 0.3s ease;
   background-color: white;
   position: relative;
+  border: 1px solid rgba(0, 0, 0, 0.05);
 
   &:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
+    transform: translateY(-12px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
   }
 `;
 
@@ -77,7 +78,7 @@ const PropertyImage = styled.div`
     bottom: 0;
     left: 0;
     right: 0;
-    height: 80px;
+    height: 70px;
     background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent);
   }
 `;
@@ -98,7 +99,7 @@ const PropertyTitle = styled.h3`
 
 const PropertyPrice = styled.div`
   font-weight: 700;
-  color: #0a6cad;
+  color: #0b548e;
   font-size: 1.4rem;
   margin: 0.5rem 0;
   display: flex;
@@ -127,12 +128,12 @@ const PropertyDetail = styled.span`
   gap: 5px;
 
   svg {
-    color: #0a6cad;
+    color: #0b548e;
   }
 `;
 
 const BackButton = styled.button`
-  background: #f0f0f0;
+  background: #eef4f8;
   border: none;
   padding: 12px 24px;
   border-radius: 8px;
@@ -146,7 +147,7 @@ const BackButton = styled.button`
   color: #333;
 
   &:hover {
-    background: #e0e0e0;
+    background: #dce7f0;
     transform: translateX(-5px);
   }
 
@@ -159,122 +160,119 @@ const Badge = styled.span`
   position: absolute;
   top: 15px;
   right: 15px;
-  background: ${(props) => props.color || "rgba(10, 108, 173, 0.85)"};
+  background: ${(props) => props.color || "rgba(11, 84, 142, 0.85)"};
   color: white;
-  padding: 5px 10px;
-  border-radius: 4px;
+  padding: 6px 12px;
+  border-radius: 20px;
   font-size: 0.8rem;
   font-weight: 600;
   z-index: 2;
 `;
 
-const Mangalore = () => {
+const Udupi = () => {
   const navigate = useNavigate();
 
-  // Enhanced property data with more houses and additional details
   const properties = [
     {
       id: 1,
-      title: "Modern Villa in Kadri Hills",
-      price: "1.2 Cr",
+      title: "Heritage Home near Sri Krishna Temple",
+      price: "1.3 Cr",
       image:
-        "https://images.unsplash.com/photo-1613977257363-707ba9348227?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+        "https://images.unsplash.com/photo-1599809275671-b5942cabc7a2?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
       beds: 4,
       baths: 3,
-      area: "3200 sq ft",
-      badge: "Premium",
-      badgeColor: "rgba(10, 108, 173, 0.85)",
+      area: "3100 sq ft",
+      badge: "Heritage",
+      badgeColor: "rgba(133, 77, 14, 0.85)",
     },
     {
       id: 2,
-      title: "Seaview Apartment in Surathkal",
-      price: "85 Lakhs",
+      title: "Modern Villa in Manipal Hills",
+      price: "1.6 Cr",
+      image:
+        "https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+      beds: 4,
+      baths: 4,
+      area: "3500 sq ft",
+      badge: "Premium",
+      badgeColor: "rgba(11, 84, 142, 0.85)",
+    },
+    {
+      id: 3,
+      title: "Student Apartment near Manipal University",
+      price: "65 Lakhs",
+      image:
+        "https://images.unsplash.com/photo-1574362848149-11496d93a7c7?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+      beds: 2,
+      baths: 2,
+      area: "1200 sq ft",
+      badge: "Students",
+      badgeColor: "rgba(13, 110, 253, 0.85)",
+    },
+    {
+      id: 4,
+      title: "Riverside Bungalow in Kalyanpur",
+      price: "1.8 Cr",
+      image:
+        "https://images.unsplash.com/photo-1583608205776-bfd35f0d9f83?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+      beds: 4,
+      baths: 3,
+      area: "3800 sq ft",
+      badge: "Waterfront",
+      badgeColor: "rgba(25, 135, 84, 0.85)",
+    },
+    {
+      id: 5,
+      title: "Contemporary House in Bannanje",
+      price: "1.4 Cr",
+      image:
+        "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+      beds: 3,
+      baths: 3,
+      area: "2900 sq ft",
+    },
+    {
+      id: 6,
+      title: "Luxury Apartment in Town Center",
+      price: "90 Lakhs",
       image:
         "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
       beds: 3,
       baths: 2,
       area: "1800 sq ft",
-      badge: "Sea View",
-      badgeColor: "rgba(25, 135, 84, 0.85)",
-    },
-    {
-      id: 3,
-      title: "Luxury Flat in City Centre",
-      price: "95 Lakhs",
-      image:
-        "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-      beds: 3,
-      baths: 2,
-      area: "2000 sq ft",
-    },
-    {
-      id: 4,
-      title: "Family Home in Bejai",
-      price: "1.5 Cr",
-      image:
-        "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-      beds: 5,
-      baths: 4,
-      area: "4000 sq ft",
-      badge: "Spacious",
-      badgeColor: "rgba(13, 110, 253, 0.85)",
-    },
-    {
-      id: 5,
-      title: "Riverside Villa in Kuloor",
-      price: "1.8 Cr",
-      image:
-        "https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-      beds: 4,
-      baths: 4,
-      area: "3600 sq ft",
-      badge: "Waterfront",
-      badgeColor: "rgba(25, 135, 84, 0.85)",
-    },
-    {
-      id: 6,
-      title: "Modern Apartment near Falnir",
-      price: "78 Lakhs",
-      image:
-        "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-      beds: 2,
-      baths: 2,
-      area: "1650 sq ft",
     },
     {
       id: 7,
-      title: "Penthouse in Mangalore CBD",
-      price: "2.1 Cr",
+      title: "Eco-friendly Villa in Katapady",
+      price: "1.9 Cr",
       image:
-        "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+        "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
       beds: 4,
-      baths: 3,
-      area: "3100 sq ft",
-      badge: "Luxury",
-      badgeColor: "rgba(102, 16, 242, 0.85)",
-    },
-    {
-      id: 8,
-      title: "Garden House in Bajpe",
-      price: "1.3 Cr",
-      image:
-        "https://images.unsplash.com/photo-1628744448840-55bdb2497bd4?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-      beds: 3,
-      baths: 3,
-      area: "2800 sq ft",
-      badge: "Garden",
+      baths: 4,
+      area: "3700 sq ft",
+      badge: "Eco-friendly",
       badgeColor: "rgba(25, 135, 84, 0.85)",
     },
     {
-      id: 9,
-      title: "Compact Apartment in Moodbidri",
-      price: "55 Lakhs",
+      id: 8,
+      title: "Spacious Family Home in Brahmavar",
+      price: "1.2 Cr",
       image:
-        "https://images.unsplash.com/photo-1574362848149-11496d93a7c7?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+        "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+      beds: 4,
+      baths: 3,
+      area: "3200 sq ft",
+    },
+    {
+      id: 9,
+      title: "Compact Flat in Kunjibettu",
+      price: "58 Lakhs",
+      image:
+        "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
       beds: 2,
       baths: 1,
-      area: "1100 sq ft",
-      badge: "Best Deal",
+      area: "1150 sq ft",
+      badge: "Best Value",
       badgeColor: "rgba(220, 53, 69, 0.85)",
     },
   ];
@@ -298,11 +296,12 @@ const Mangalore = () => {
       </BackButton>
 
       <Header>
-        <Title>Properties in Mangalore</Title>
+        <Title>Properties in Udupi</Title>
         <Description>
-          Discover your dream home in Mangalore, a coastal gem known for its
-          beautiful beaches, rich culture, and growing real estate market.
-          Browse through our exclusive selection of premium properties.
+          Explore premium real estate in Udupi, a charming coastal town renowned
+          for its temples, educational institutions, and scenic landscapes. From
+          heritage homes near the iconic Sri Krishna Temple to modern apartments
+          near Manipal University.
         </Description>
       </Header>
 
@@ -368,4 +367,4 @@ const Mangalore = () => {
   );
 };
 
-export default Mangalore;
+export default Udupi;
